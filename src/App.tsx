@@ -30,6 +30,7 @@ import ClientJobDetailPage from './pages/job/detail';
 import ClientCompanyPage from './pages/company';
 import ClientCompanyDetailPage from './pages/company/detail';
 import JobTabs from './pages/admin/job/job.tabs';
+import { ConfigProvider } from 'antd';
 
 const LayoutClient = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -57,7 +58,6 @@ const LayoutClient = () => {
 export default function App() {
   const dispatch = useAppDispatch();
   const isLoading = useAppSelector(state => state.account.isLoading);
-
 
   useEffect(() => {
     if (
@@ -146,7 +146,6 @@ export default function App() {
       ],
     },
 
-
     {
       path: "/login",
       element: <LoginPage />,
@@ -159,8 +158,15 @@ export default function App() {
   ]);
 
   return (
-    <>
+    <ConfigProvider
+      theme={{
+        token: {
+          colorPrimary: '#2563eb',
+          colorLink: '#2563eb',
+        }
+      }}
+    >
       <RouterProvider router={router} />
-    </>
+    </ConfigProvider>
   )
 }
