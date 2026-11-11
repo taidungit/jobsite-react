@@ -1,22 +1,36 @@
 $color-white: #ffffff;
-$color-light: #f1f5f9;
-$color-black: #121212;
-$color-night: #001632;
+$color-light: #f8fafc;
+$color-black: #0f172a;
+$color-night: #1e293b;
 
-$color-red: #f44336;
-$color-blue: #1a73e8;
-$color-gray: #80868b;
-$color-grayish: #dadce0;
+$color-red: #ef4444;
+$color-blue: #2563eb;
+$color-gray: #64748b;
+$color-grayish: #e2e8f0;
 
 $shadow-normal: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
 $shadow-medium: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-$shadow-large: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+$shadow-large: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
 
 .login-page,
 .register-page {
     color: $color-black;
-    background: $color-light;
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+    min-height: 100vh;
+    position: relative;
 
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: radial-gradient(circle at 20% 50%, rgba(37, 99, 235, 0.15) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 20%, rgba(245, 158, 11, 0.1) 0%, transparent 40%),
+                    radial-gradient(circle at 50% 80%, rgba(16, 185, 129, 0.1) 0%, transparent 40%);
+        pointer-events: none;
+    }
 
     // Components
     .container {
@@ -25,37 +39,40 @@ $shadow-large: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0,
         align-items: center;
         max-width: 80rem;
         min-height: 100vh;
-        // width: 100%;
-        padding: 0 2rem;
+        padding: 2rem;
         margin: 0 auto;
+        position: relative;
+        z-index: 1;
     }
 
-
     .text {
-        font-family: inherit;
+        font-family: 'Inter', inherit;
         line-height: inherit;
         text-transform: unset;
         text-rendering: optimizeLegibility;
 
         &-large {
-            font-size: 2rem;
-            font-weight: 600;
+            font-size: 1.75rem;
+            font-weight: 700;
             color: $color-black;
+            letter-spacing: -0.5px;
         }
 
         &-normal {
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 400;
-            color: $color-black;
+            color: $color-gray;
         }
 
         &-links {
-            font-size: 1rem;
-            font-weight: 400;
+            font-size: 0.95rem;
+            font-weight: 500;
             color: $color-blue;
+            transition: all 0.2s ease;
 
             &:hover {
                 text-decoration: underline;
+                color: darken($color-blue, 10%);
             }
         }
     }
@@ -66,18 +83,26 @@ $shadow-large: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0,
             max-width: 28rem;
             width: 100%;
             margin: 2rem auto;
-            padding: 2rem 2.5rem;
+            padding: 2.5rem 2.5rem;
             border: none;
             outline: none;
-            border-radius: 0.5rem;
+            border-radius: 16px;
             color: $color-black;
-            background: $color-white;
-            box-shadow: $shadow-large;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            box-shadow: $shadow-large,
+                        0 0 0 1px rgba(255, 255, 255, 0.1);
+
+            @media (max-width: 480px) {
+                margin: 1rem;
+                padding: 2rem 1.5rem;
+                border-radius: 12px;
+            }
 
             .form {
                 width: 100%;
                 height: auto;
-                margin-top: 2rem;
+                margin-top: 1.5rem;
 
                 .input-control {
                     display: flex;
@@ -87,39 +112,55 @@ $shadow-large: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0,
                 }
 
                 .input-field {
-                    font-family: inherit;
-                    font-size: 1rem;
+                    font-family: 'Inter', inherit;
+                    font-size: 0.95rem;
                     font-weight: 400;
                     line-height: inherit;
                     width: 100%;
                     height: auto;
                     padding: 0.75rem 1.25rem;
-                    border: none;
+                    border: 2px solid $color-grayish;
                     outline: none;
-                    border-radius: 2rem;
+                    border-radius: 12px;
                     color: $color-black;
                     background: $color-light;
                     text-transform: unset;
                     text-rendering: optimizeLegibility;
+                    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+                    &:focus {
+                        border-color: $color-blue;
+                        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+                    }
                 }
 
                 .input-submit {
-                    font-family: inherit;
+                    font-family: 'Inter', inherit;
                     font-size: 1rem;
-                    font-weight: 500;
+                    font-weight: 600;
                     line-height: inherit;
                     cursor: pointer;
                     min-width: 40%;
                     height: auto;
-                    padding: 0.65rem 1.25rem;
+                    padding: 0.75rem 1.5rem;
                     border: none;
                     outline: none;
-                    border-radius: 2rem;
+                    border-radius: 12px;
                     color: $color-white;
-                    background: $color-blue;
-                    box-shadow: $shadow-medium;
+                    background: linear-gradient(135deg, $color-blue 0%, darken($color-blue, 10%) 100%);
+                    box-shadow: 0 4px 14px 0 rgba(37, 99, 235, 0.4);
                     text-transform: capitalize;
                     text-rendering: optimizeLegibility;
+                    transition: all 0.2s ease;
+
+                    &:hover {
+                        transform: translateY(-1px);
+                        box-shadow: 0 6px 20px 0 rgba(37, 99, 235, 0.5);
+                    }
+
+                    &:active {
+                        transform: translateY(0);
+                    }
                 }
             }
 
@@ -128,23 +169,23 @@ $shadow-large: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0,
                 flex-direction: row;
                 justify-content: center;
                 align-items: center;
-                margin: 1rem 0;
+                margin: 1.5rem 0;
 
                 &-line {
                     flex: auto;
                     flex-basis: auto;
                     border: none;
                     outline: none;
-                    height: 2px;
+                    height: 1px;
                     background: $color-grayish;
                 }
 
                 &-text {
-                    font-family: inherit;
-                    font-size: 1rem;
+                    font-family: 'Inter', inherit;
+                    font-size: 0.85rem;
                     font-weight: 500;
                     line-height: inherit;
-                    color: $color-black;
+                    color: $color-gray;
                     margin: 0 1rem;
                 }
             }
@@ -155,7 +196,7 @@ $shadow-large: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0,
                 }
 
                 &-action {
-                    font-family: inherit;
+                    font-family: 'Inter', inherit;
                     font-size: 0.95rem;
                     font-weight: 500;
                     line-height: inherit;
@@ -164,18 +205,19 @@ $shadow-large: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0,
                     align-items: center;
                     width: 100%;
                     height: auto;
-                    padding: 0.35rem 1.25rem;
+                    padding: 0.5rem 1.25rem;
                     outline: none;
                     border: 2px solid $color-grayish;
-                    border-radius: 2rem;
+                    border-radius: 12px;
                     color: $color-black;
                     background: $color-white;
                     text-transform: capitalize;
                     text-rendering: optimizeLegibility;
-                    transition: all 0.35s ease;
+                    transition: all 0.2s ease;
 
                     &:hover {
                         background: $color-light;
+                        border-color: darken($color-grayish, 10%);
                     }
                 }
             }

@@ -1,3 +1,80 @@
+/* ===== Design System Variables ===== */
+:root {
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --primary-light: #3b82f6;
+    --primary-50: #eff6ff;
+    --primary-100: #dbeafe;
+
+    --secondary: #0f172a;
+    --secondary-light: #1e293b;
+
+    --accent: #f59e0b;
+    --accent-light: #fbbf24;
+    --success: #10b981;
+    --success-light: #d1fae5;
+    --danger: #ef4444;
+    --danger-light: #fee2e2;
+    --info: #06b6d4;
+
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8fafc;
+    --bg-tertiary: #f1f5f9;
+    --bg-dark: #0f172a;
+    --bg-dark-light: #1e293b;
+
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+    --text-white: #ffffff;
+
+    --border: #e2e8f0;
+    --border-light: #f1f5f9;
+
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+
+    --radius-sm: 6px;
+    --radius: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
+    --radius-full: 9999px;
+
+    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+    --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ===== Global Reset ===== */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    font-family: var(--font-family);
+    color: var(--text-primary);
+    background-color: var(--bg-secondary);
+    line-height: 1.6;
+    font-size: 14px;
+}
+
+/* ===== Ant Design Overrides ===== */
 .ant-pro-footer-bar {
     z-index: 1000;
     background-color: white;
@@ -16,8 +93,6 @@
     &.close {
         transform: scale(0);
         opacity: 0;
-        -webkit-transition: all .1s linear;
-        -o-transition: all .25s linear;
         transition: all .25s linear;
     }
 }
@@ -26,12 +101,6 @@
     &.close {
         .ant-modal-mask {
             background-color: unset !important;
-            // -webkit-transition: background-color 0.3s ease-in;
-            // /* Safari */
-            // transition: background-color 0s linear;
-            // -webkit-transition-delay: 0.3s;
-            // /* Safari */
-            // transition-delay: 0.2s;
         }
     }
 }
@@ -40,4 +109,33 @@
     .ant-form-item {
         margin-bottom: 0 !important;
     }
+}
+
+/* ===== Custom Scrollbar ===== */
+@media (min-width: 767px) {
+    ::-webkit-scrollbar {
+        width: 6px;
+        height: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: var(--bg-tertiary);
+        border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: var(--text-muted);
+        border-radius: 10px;
+        transition: background var(--transition);
+
+        &:hover {
+            background: var(--text-secondary);
+        }
+    }
+}
+
+/* ===== Selection ===== */
+::selection {
+    background-color: var(--primary-100);
+    color: var(--primary-dark);
 }

@@ -1,4 +1,3 @@
-import axios from 'axios'
 declare module '*.mp4' {
     export default string;
 }
@@ -11,7 +10,6 @@ declare module '*.xlsx' {
     export default string;
 }
 
-
 declare module '*.xlsm' {
     export default string;
 }
@@ -20,19 +18,14 @@ declare module '*.csv' {
     export default string;
 }
 
+declare module '@ant-design/icons';
+declare module 'react-icons/fa';
 declare module 'react-icons/*';
+declare module 'antd/locale/*';
+declare module 'antd/lib/locale/*';
 
 declare module 'uuid';
-
 declare module 'lodash';
-
-
-// https://github.com/axios/axios/issues/1510#issuecomment-448201698
-declare module 'axios' {
-    export interface AxiosResponse<T = any> extends Promise<T> { }
-}
-
-
 
 declare module '*.module.css' {
     const classes: { [key: string]: string };
