@@ -17,7 +17,7 @@ interface IProps {
     listPermissions: {
         module: string;
         permissions: IPermission[]
-    }[];
+    }[] | null;
     singleRole: IRole | null;
     setSingleRole: (v: any) => void;
 }

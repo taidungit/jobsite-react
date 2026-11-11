@@ -105,8 +105,8 @@ const ModuleApi = (props: IProps) => {
           name={["permissions", item.module]}
           fieldProps={{
             defaultChecked: false,
-            onClick: (u, e) => { e.stopPropagation() },
-            onChange: (value) => handleSwitchAll(value, item.module),
+            onClick: (u: any, e: any) => { e.stopPropagation() },
+            onChange: (value: boolean) => handleSwitchAll(value, item.module),
           }}
         />
       </div>
@@ -122,7 +122,7 @@ const ModuleApi = (props: IProps) => {
                     name={["permissions", value.id as string]}
                     fieldProps={{
                       defaultChecked: false,
-                      onChange: (v) => handleSingleCheck(v, (value.id) as string, item.module)
+                      onChange: (v: boolean) => handleSingleCheck(v, (value.id) as string, item.module)
                     }}
                   />
                 </div>
