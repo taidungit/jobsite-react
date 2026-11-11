@@ -6,6 +6,8 @@ import { useDispatch } from 'react-redux';
 import { setUserLoginInfo } from '@/redux/slice/accountSlide';
 import styles from 'styles/auth.module.scss';
 import { useAppSelector } from '@/redux/hooks';
+import { LockOutlined, UserOutlined, ArrowLeftOutlined } from '@ant-design/icons';
+import { FaReact } from 'react-icons/fa';
 
 const LoginPage = () => {
     const navigate = useNavigate();
@@ -20,7 +22,6 @@ const LoginPage = () => {
     useEffect(() => {
         //đã login => redirect to '/'
         if (isAuthenticated) {
-            // navigate('/');
             window.location.href = '/';
         }
     }, [])
@@ -46,54 +47,108 @@ const LoginPage = () => {
         }
     };
 
-
     return (
         <div className={styles["login-page"]}>
             <main className={styles.main}>
                 <div className={styles.container}>
                     <section className={styles.wrapper}>
-                        <div className={styles.heading}>
-                            <h2 className={`${styles.text} ${styles["text-large"]}`}>Đăng Nhập</h2>
-                            <Divider />
-
+                        <div style={{ textAlign: "center", marginBottom: 24 }}>
+                            <div
+                                onClick={() => navigate('/')}
+                                style={{
+                                    display: "inline-flex",
+                                    alignItems: "center",
+                                    gap: 8,
+                                    cursor: "pointer",
+                                    marginBottom: 12
+                                }}
+                            >
+                                <FaReact style={{ color: "#2563eb", fontSize: 32 }} />
+                                <span style={{
+                                    fontSize: 24,
+                                    fontWeight: 800,
+                                    letterSpacing: "-0.5px",
+                                    background: "linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)",
+                                    WebkitBackgroundClip: "text",
+                                    WebkitTextFillColor: "transparent"
+                                }}>
+                                    JobHunter
+                                </span>
+                            </div>
+                            <h2 className={`${styles.text} ${styles["text-large"]}`} style={{ fontSize: 22, fontWeight: 700, color: "#0f172a", margin: 0 }}>
+                                Đăng Nhập Tài Khoản
+                            </h2>
+                            <p style={{ fontSize: 14, color: "#64748b", marginTop: 4 }}>
+                                Chào mừng bạn quay trở lại với JobHunter
+                            </p>
                         </div>
+
                         <Form
                             name="basic"
-                            // style={{ maxWidth: 600, margin: '0 auto' }}
                             onFinish={onFinish}
                             autoComplete="off"
+                            layout="vertical"
                         >
                             <Form.Item
-                                labelCol={{ span: 24 }} //whole column
-                                label="Email"
+                                label={<span style={{ fontWeight: 600, color: "#334155" }}>Email</span>}
                                 name="username"
                                 rules={[{ required: true, message: 'Email không được để trống!' }]}
                             >
-                                <Input />
+                                <Input
+                                    size="large"
+                                    prefix={<UserOutlined style={{ color: '#94a3b8', marginRight: 4 }} />}
+                                    placeholder="yourname@gmail.com"
+                                    style={{ borderRadius: 8 }}
+                                />
                             </Form.Item>
 
                             <Form.Item
-                                labelCol={{ span: 24 }} //whole column
-                                label="Mật khẩu"
+                                label={<span style={{ fontWeight: 600, color: "#334155" }}>Mật khẩu</span>}
                                 name="password"
                                 rules={[{ required: true, message: 'Mật khẩu không được để trống!' }]}
                             >
-                                <Input.Password />
+                                <Input.Password
+                                    size="large"
+                                    prefix={<LockOutlined style={{ color: '#94a3b8', marginRight: 4 }} />}
+                                    placeholder="••••••••"
+                                    style={{ borderRadius: 8 }}
+                                />
                             </Form.Item>
 
-                            <Form.Item
-                            // wrapperCol={{ offset: 6, span: 16 }}
-                            >
-                                <Button type="primary" htmlType="submit" loading={isSubmit}>
+                            <Form.Item style={{ marginTop: 24, marginBottom: 16 }}>
+                                <Button
+                                    type="primary"
+                                    htmlType="submit"
+                                    loading={isSubmit}
+                                    size="large"
+                                    style={{
+                                        width: '100%',
+                                        height: 44,
+                                        fontWeight: 600,
+                                        borderRadius: 8,
+                                        background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+                                        boxShadow: '0 4px 12px rgba(37, 99, 235, 0.35)',
+                                        border: 'none'
+                                    }}
+                                >
                                     Đăng nhập
                                 </Button>
                             </Form.Item>
-                            <Divider>Or</Divider>
-                            <p className="text text-normal">Chưa có tài khoản ?
-                                <span>
-                                    <Link to='/register' > Đăng Ký </Link>
-                                </span>
-                            </p>
+
+                            <Divider style={{ margin: '20px 0', color: '#94a3b8', fontSize: 13 }}>hoặc</Divider>
+
+                            <div style={{ textAlign: "center", fontSize: 14, color: "#475569" }}>
+                                Chưa có tài khoản?{' '}
+                                <Link to='/register' style={{ color: '#2563eb', fontWeight: 600 }}>
+                                    Đăng Ký Ngay
+                                </Link>
+                            </div>
+
+                            <div style={{ textAlign: "center", marginTop: 16 }}>
+                                <Link to='/' style={{ fontSize: 13, color: '#64748b', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                                    <ArrowLeftOutlined style={{ fontSize: 11 }} /> Về trang chủ
+                                </Link>
+                            </div>
                         </Form>
                     </section>
                 </div>
