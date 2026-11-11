@@ -46,13 +46,14 @@ const JobPage = () => {
         {
             title: 'STT',
             key: 'index',
-            width: 50,
+            width: 60,
             align: "center",
             render: (text, record, index) => {
                 return (
-                    <>
+                    <span style={{ fontWeight: 600, color: '#64748b' }}>
                         {(index + 1) + (meta.page - 1) * (meta.pageSize)}
-                    </>)
+                    </span>
+                )
             },
             hideInSearch: true,
         },
@@ -60,12 +61,14 @@ const JobPage = () => {
             title: 'Tên Job',
             dataIndex: 'name',
             sorter: true,
+            render: (text) => <span style={{ fontWeight: 600, color: '#0f172a' }}>{text}</span>
         },
         {
             title: 'Công ty',
             dataIndex: ["company", "name"],
             sorter: true,
             hideInSearch: true,
+            render: (text) => <span style={{ color: '#475569' }}>{text}</span>
         },
         {
             title: 'Mức lương',
@@ -73,12 +76,23 @@ const JobPage = () => {
             sorter: true,
             render(dom, entity, index, action, schema) {
                 const str = "" + entity.salary;
-                return <>{str?.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} đ</>
+                return (
+                    <span style={{ fontWeight: 600, color: '#059669' }}>
+                        {str?.replace(/\B(?=(\d{3})+(?!\d))/g, ',')} đ
+                    </span>
+                )
             },
         },
         {
             title: 'Level',
             dataIndex: 'level',
+            render(dom, entity) {
+                return (
+                    <Tag color="blue" style={{ borderRadius: 6, fontWeight: 500 }}>
+                        {entity.level}
+                    </Tag>
+                )
+            },
             renderFormItem: (item, props, form) => (
                 <ProFormSelect
                     showSearch
@@ -99,11 +113,11 @@ const JobPage = () => {
             title: 'Trạng thái',
             dataIndex: 'active',
             render(dom, entity, index, action, schema) {
-                return <>
-                    <Tag color={entity.active ? "lime" : "red"} >
+                return (
+                    <Tag color={entity.active ? "success" : "error"} style={{ borderRadius: 6, fontWeight: 600 }}>
                         {entity.active ? "ACTIVE" : "INACTIVE"}
                     </Tag>
-                </>
+                )
             },
             hideInSearch: true,
         },
@@ -111,11 +125,13 @@ const JobPage = () => {
         {
             title: 'CreatedAt',
             dataIndex: 'createdAt',
-            width: 200,
+            width: 180,
             sorter: true,
             render: (text, record, index, action) => {
                 return (
-                    <>{record.createdAt ? dayjs(record.createdAt).format('DD-MM-YYYY HH:mm:ss') : ""}</>
+                    <span style={{ color: '#64748b', fontSize: 13 }}>
+                        {record.createdAt ? dayjs(record.createdAt).format('DD-MM-YYYY HH:mm:ss') : ""}
+                    </span>
                 )
             },
             hideInSearch: true,
@@ -123,35 +139,38 @@ const JobPage = () => {
         {
             title: 'UpdatedAt',
             dataIndex: 'updatedAt',
-            width: 200,
+            width: 180,
             sorter: true,
             render: (text, record, index, action) => {
                 return (
-                    <>{record.updatedAt ? dayjs(record.updatedAt).format('DD-MM-YYYY HH:mm:ss') : ""}</>
+                    <span style={{ color: '#64748b', fontSize: 13 }}>
+                        {record.updatedAt ? dayjs(record.updatedAt).format('DD-MM-YYYY HH:mm:ss') : ""}
+                    </span>
                 )
             },
             hideInSearch: true,
         },
         {
-
             title: 'Actions',
             hideInSearch: true,
-            width: 50,
+            width: 90,
+            align: 'center',
             render: (_value, entity, _index, _action) => (
-                <Space>
-                    < Access
+                <Space size="middle">
+                    <Access
                         permission={ALL_PERMISSIONS.JOBS.UPDATE}
                         hideChildren
                     >
                         <EditOutlined
                             style={{
-                                fontSize: 20,
-                                color: '#ffa500',
+                                fontSize: 18,
+                                color: '#d97706',
+                                cursor: 'pointer'
                             }}
-                            type=""
                             onClick={() => {
                                 navigate(`/admin/job/upsert?id=${entity.id}`)
                             }}
+                            title="Chỉnh sửa công việc"
                         />
                     </Access >
                     <Access
@@ -166,19 +185,18 @@ const JobPage = () => {
                             okText="Xác nhận"
                             cancelText="Hủy"
                         >
-                            <span style={{ cursor: "pointer", margin: "0 10px" }}>
-                                <DeleteOutlined
-                                    style={{
-                                        fontSize: 20,
-                                        color: '#ff4d4f',
-                                    }}
-                                />
-                            </span>
+                            <DeleteOutlined
+                                style={{
+                                    fontSize: 18,
+                                    color: '#ef4444',
+                                    cursor: 'pointer'
+                                }}
+                                title="Xóa công việc"
+                            />
                         </Popconfirm>
                     </Access>
                 </Space >
             ),
-
         },
     ];
 
@@ -212,7 +230,7 @@ const JobPage = () => {
             for (const field of fields) {
                 if (sort[field]) {
                     sortBy = `sort=${field},${sort[field] === 'ascend' ? 'asc' : 'desc'}`;
-                    break;  // Remove this if you want to handle multiple sort parameters
+                    break;
                 }
             }
         }
@@ -250,7 +268,7 @@ const JobPage = () => {
                             pageSize: meta.pageSize,
                             showSizeChanger: true,
                             total: meta.total,
-                            showTotal: (total, range) => { return (<div> {range[0]}-{range[1]} trên {total} rows</div>) }
+                            showTotal: (total: number, range: [number, number]) => { return (<div> {range[0]}-{range[1]} trên {total} rows</div>) }
                         }
                     }
                     rowSelection={false}
@@ -260,6 +278,13 @@ const JobPage = () => {
                                 icon={<PlusOutlined />}
                                 type="primary"
                                 onClick={() => navigate('upsert')}
+                                style={{
+                                    borderRadius: 8,
+                                    fontWeight: 600,
+                                    background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+                                    boxShadow: '0 4px 12px rgba(37, 99, 235, 0.35)',
+                                    border: 'none'
+                                }}
                             >
                                 Thêm mới
                             </Button>

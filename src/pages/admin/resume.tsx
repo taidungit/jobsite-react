@@ -2,7 +2,7 @@ import DataTable from "@/components/client/data-table";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { IResume } from "@/types/backend";
 import { ActionType, ProColumns, ProFormSelect } from '@ant-design/pro-components';
-import { Space, message, notification } from "antd";
+import { Space, Tag, message, notification } from "antd";
 import { useState, useRef } from 'react';
 import dayjs from 'dayjs';
 import { callDeleteResume } from "@/config/api";
@@ -12,7 +12,7 @@ import ViewDetailResume from "@/components/admin/resume/view.resume";
 import { ALL_PERMISSIONS } from "@/config/permissions";
 import Access from "@/components/share/access";
 import { sfIn } from "spring-filter-query-builder";
-import { EditOutlined } from "@ant-design/icons";
+import { EditOutlined, ClockCircleOutlined, CheckCircleOutlined, EyeOutlined } from "@ant-design/icons";
 
 const ResumePage = () => {
     const tableRef = useRef<ActionType>();
@@ -44,18 +44,38 @@ const ResumePage = () => {
         tableRef?.current?.reload();
     }
 
+    const getStatusTag = (status: string) => {
+        switch (status) {
+            case 'PENDING':
+                return <Tag color="warning" icon={<ClockCircleOutlined />} style={{ borderRadius: 6, fontWeight: 500 }}>Đang chờ duyệt</Tag>;
+            case 'REVIEWING':
+                return <Tag color="processing" icon={<EyeOutlined />} style={{ borderRadius: 6, fontWeight: 500 }}>Đang xem xét</Tag>;
+            case 'APPROVED':
+                return <Tag color="success" icon={<CheckCircleOutlined />} style={{ borderRadius: 6, fontWeight: 500 }}>Đã phê duyệt</Tag>;
+            case 'REJECTED':
+                return <Tag color="error" style={{ borderRadius: 6, fontWeight: 500 }}>Từ chối</Tag>;
+            default:
+                return <Tag color="default" style={{ borderRadius: 6 }}>{status}</Tag>;
+        }
+    };
+
     const columns: ProColumns<IResume>[] = [
         {
             title: 'Id',
             dataIndex: 'id',
-            width: 50,
+            width: 70,
             render: (text, record, index, action) => {
                 return (
-                    <a href="#" onClick={() => {
-                        setOpenViewDetail(true);
-                        setDataInit(record);
-                    }}>
-                        {record.id}
+                    <a
+                        href="#"
+                        style={{ fontWeight: 600, color: '#2563eb' }}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            setOpenViewDetail(true);
+                            setDataInit(record);
+                        }}
+                    >
+                        #{record.id}
                     </a>
                 )
             },
@@ -65,6 +85,9 @@ const ResumePage = () => {
             title: 'Trạng Thái',
             dataIndex: 'status',
             sorter: true,
+            render(dom, entity) {
+                return entity.status ? getStatusTag(entity.status) : <></>;
+            },
             renderFormItem: (item, props, form) => (
                 <ProFormSelect
                     showSearch
@@ -76,7 +99,7 @@ const ResumePage = () => {
                         APPROVED: 'APPROVED',
                         REJECTED: 'REJECTED',
                     }}
-                    placeholder="Chọn level"
+                    placeholder="Chọn trạng thái"
                 />
             ),
         },
@@ -85,105 +108,96 @@ const ResumePage = () => {
             title: 'Job',
             dataIndex: ["job", "name"],
             hideInSearch: true,
+            render: (text) => <span style={{ fontWeight: 600, color: '#0f172a' }}>{text}</span>
         },
         {
             title: 'Company',
             dataIndex: "companyName",
             hideInSearch: true,
+            render: (text) => <span style={{ color: '#475569' }}>{text}</span>
         },
 
         {
-            title: 'CreatedAt',
+            title: 'Ngày Tạo',
             dataIndex: 'createdAt',
-            width: 200,
+            width: 180,
             sorter: true,
             render: (text, record, index, action) => {
                 return (
-                    <>{record.createdAt ? dayjs(record.createdAt).format('DD-MM-YYYY HH:mm:ss') : ""}</>
+                    <span style={{ color: '#64748b', fontSize: 13 }}>
+                        {record.createdAt ? dayjs(record.createdAt).format('DD-MM-YYYY HH:mm:ss') : ""}
+                    </span>
                 )
             },
             hideInSearch: true,
         },
         {
-            title: 'UpdatedAt',
+            title: 'Ngày Cập Nhật',
             dataIndex: 'updatedAt',
-            width: 200,
+            width: 180,
             sorter: true,
             render: (text, record, index, action) => {
                 return (
-                    <>{record.updatedAt ? dayjs(record.updatedAt).format('DD-MM-YYYY HH:mm:ss') : ""}</>
+                    <span style={{ color: '#64748b', fontSize: 13 }}>
+                        {record.updatedAt ? dayjs(record.updatedAt).format('DD-MM-YYYY HH:mm:ss') : ""}
+                    </span>
                 )
             },
             hideInSearch: true,
         },
         {
-
-            title: 'Actions',
+            title: 'Hành Động',
             hideInSearch: true,
-            width: 100,
+            width: 90,
+            align: 'center',
             render: (_value, entity, _index, _action) => (
-                <Space>
+                <Space size="middle">
                     <EditOutlined
                         style={{
-                            fontSize: 20,
-                            color: '#ffa500',
+                            fontSize: 18,
+                            color: '#d97706',
+                            cursor: 'pointer'
                         }}
-                        type=""
                         onClick={() => {
                             setOpenViewDetail(true);
                             setDataInit(entity);
                         }}
+                        title="Xem & Cập nhật trạng thái"
                     />
-
-                    {/* <Popconfirm
-                        placement="leftTop"
-                        title={"Xác nhận xóa resume"}
-                        description={"Bạn có chắc chắn muốn xóa resume này ?"}
-                        onConfirm={() => handleDeleteResume(entity.id)}
-                        okText="Xác nhận"
-                        cancelText="Hủy"
-                    >
-                        <span style={{ cursor: "pointer", margin: "0 10px" }}>
-                            <DeleteOutlined
-                                style={{
-                                    fontSize: 20,
-                                    color: '#ff4d4f',
-                                }}
-                            />
-                        </span>
-                    </Popconfirm> */}
                 </Space>
             ),
-
         },
     ];
 
     const buildQuery = (params: any, sort: any, filter: any) => {
         const clone = { ...params };
+        let parts = [];
 
         if (clone?.status?.length) {
-            clone.filter = sfIn("status", clone.status).toString();
-            delete clone.status;
+            parts.push(`${sfIn("status", clone.status).toString()}`);
         }
+
+        clone.filter = parts.join(' and ');
+        if (!clone.filter) delete clone.filter;
 
         clone.page = clone.current;
         clone.size = clone.pageSize;
 
         delete clone.current;
         delete clone.pageSize;
+        delete clone.status;
 
         let temp = queryString.stringify(clone);
 
         let sortBy = "";
-        if (sort && sort.status) {
-            sortBy = sort.status === 'ascend' ? "sort=status,asc" : "sort=status,desc";
-        }
-
-        if (sort && sort.createdAt) {
-            sortBy = sort.createdAt === 'ascend' ? "sort=createdAt,asc" : "sort=createdAt,desc";
-        }
-        if (sort && sort.updatedAt) {
-            sortBy = sort.updatedAt === 'ascend' ? "sort=updatedAt,asc" : "sort=updatedAt,desc";
+        const fields = ["status", "createdAt", "updatedAt"];
+        if (sort) {
+            for (const field of fields) {
+                if (sort[field]) {
+                    sortBy = `sort=${field},${sort[field] === 'ascend' ? 'asc' : 'desc'}`;
+                    break;
+                }
+            }
         }
 
         //mặc định sort theo updatedAt
@@ -193,7 +207,6 @@ const ResumePage = () => {
             temp = `${temp}&${sortBy}`;
         }
 
-        // temp += "&populate=companyId,jobId&fields=companyId.id, companyId.name, companyId.logo, jobId.id, jobId.name";
         return temp;
     }
 
@@ -204,7 +217,7 @@ const ResumePage = () => {
             >
                 <DataTable<IResume>
                     actionRef={tableRef}
-                    headerTitle="Danh sách Resumes"
+                    headerTitle="Danh sách Hồ Sơ Ứng Tuyển"
                     rowKey="id"
                     loading={isFetching}
                     columns={columns}
@@ -220,7 +233,7 @@ const ResumePage = () => {
                             pageSize: meta.pageSize,
                             showSizeChanger: true,
                             total: meta.total,
-                            showTotal: (total, range) => { return (<div> {range[0]}-{range[1]} trên {total} rows</div>) }
+                            showTotal: (total: number, range: [number, number]) => { return (<div> {range[0]}-{range[1]} trên {total} rows</div>) }
                         }
                     }
                     rowSelection={false}
@@ -238,7 +251,7 @@ const ResumePage = () => {
                 setDataInit={setDataInit}
                 reloadTable={reloadTable}
             />
-        </div >
+        </div>
     )
 }
 

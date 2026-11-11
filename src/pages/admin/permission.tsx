@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { IPermission } from "@/types/backend";
 import { DeleteOutlined, EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { ActionType, ProColumns } from '@ant-design/pro-components';
-import { Button, Popconfirm, Space, message, notification } from "antd";
+import { Button, Popconfirm, Space, Tag, message, notification } from "antd";
 import { useState, useRef } from 'react';
 import dayjs from 'dayjs';
 import { callDeletePermission } from "@/config/api";
@@ -50,14 +50,19 @@ const PermissionPage = () => {
         {
             title: 'Id',
             dataIndex: 'id',
-            width: 50,
+            width: 70,
             render: (text, record, index, action) => {
                 return (
-                    <a href="#" onClick={() => {
-                        setOpenViewDetail(true);
-                        setDataInit(record);
-                    }}>
-                        {record.id}
+                    <a
+                        href="#"
+                        style={{ fontWeight: 600, color: '#2563eb' }}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            setOpenViewDetail(true);
+                            setDataInit(record);
+                        }}
+                    >
+                        #{record.id}
                     </a>
                 )
             },
@@ -67,19 +72,31 @@ const PermissionPage = () => {
             title: 'Name',
             dataIndex: 'name',
             sorter: true,
+            render: (text) => <span style={{ fontWeight: 600, color: '#0f172a' }}>{text}</span>
         },
         {
-            title: 'API',
+            title: 'API Path',
             dataIndex: 'apiPath',
             sorter: true,
+            render: (text) => <code style={{ background: '#f1f5f9', padding: '2px 8px', borderRadius: 4, color: '#0f172a', fontSize: 13 }}>{text}</code>
         },
         {
             title: 'Method',
             dataIndex: 'method',
             sorter: true,
-            render(dom, entity, index, action, schema) {
+            render(dom, entity) {
                 return (
-                    <p style={{ paddingLeft: 10, fontWeight: 'bold', marginBottom: 0, color: colorMethod(entity?.method as string) }}>{entity?.method || ''}</p>
+                    <Tag
+                        style={{
+                            fontWeight: 700,
+                            borderRadius: 6,
+                            color: colorMethod(entity?.method as string),
+                            borderColor: colorMethod(entity?.method as string),
+                            background: '#fafafa'
+                        }}
+                    >
+                        {entity?.method || ''}
+                    </Tag>
                 )
             },
         },
@@ -87,52 +104,69 @@ const PermissionPage = () => {
             title: 'Module',
             dataIndex: 'module',
             sorter: true,
+            render: (text) => (
+                <span style={{
+                    background: '#eff6ff',
+                    color: '#2563eb',
+                    padding: '3px 10px',
+                    borderRadius: 6,
+                    fontWeight: 600,
+                    fontSize: 12
+                }}>
+                    {text}
+                </span>
+            )
         },
         {
-            title: 'CreatedAt',
+            title: 'Ngày Tạo',
             dataIndex: 'createdAt',
-            width: 200,
+            width: 180,
             sorter: true,
             render: (text, record, index, action) => {
                 return (
-                    <>{record.createdAt ? dayjs(record.createdAt).format('DD-MM-YYYY HH:mm:ss') : ""}</>
+                    <span style={{ color: '#64748b', fontSize: 13 }}>
+                        {record.createdAt ? dayjs(record.createdAt).format('DD-MM-YYYY HH:mm:ss') : ""}
+                    </span>
                 )
             },
             hideInSearch: true,
         },
         {
-            title: 'UpdatedAt',
+            title: 'Ngày Cập Nhật',
             dataIndex: 'updatedAt',
-            width: 200,
+            width: 180,
             sorter: true,
             render: (text, record, index, action) => {
                 return (
-                    <>{record.updatedAt ? dayjs(record.updatedAt).format('DD-MM-YYYY HH:mm:ss') : ""}</>
+                    <span style={{ color: '#64748b', fontSize: 13 }}>
+                        {record.updatedAt ? dayjs(record.updatedAt).format('DD-MM-YYYY HH:mm:ss') : ""}
+                    </span>
                 )
             },
             hideInSearch: true,
         },
         {
-
-            title: 'Actions',
+            title: 'Hành Động',
             hideInSearch: true,
-            width: 50,
+            width: 90,
+            align: 'center',
             render: (_value, entity, _index, _action) => (
-                <Space>
+                <Space size="middle">
                     <Access
                         permission={ALL_PERMISSIONS.PERMISSIONS.UPDATE}
                         hideChildren
                     >
                         <EditOutlined
                             style={{
-                                fontSize: 20,
-                                color: '#ffa500',
+                                fontSize: 18,
+                                color: '#d97706',
+                                cursor: 'pointer'
                             }}
-                            type=""
                             onClick={() => {
                                 setOpenModal(true);
                                 setDataInit(entity);
                             }}
+                            title="Chỉnh sửa quyền"
                         />
                     </Access>
                     <Access
@@ -147,56 +181,48 @@ const PermissionPage = () => {
                             okText="Xác nhận"
                             cancelText="Hủy"
                         >
-                            <span style={{ cursor: "pointer", margin: "0 10px" }}>
-                                <DeleteOutlined
-                                    style={{
-                                        fontSize: 20,
-                                        color: '#ff4d4f',
-                                    }}
-                                />
-                            </span>
+                            <DeleteOutlined
+                                style={{
+                                    fontSize: 18,
+                                    color: '#ef4444',
+                                    cursor: 'pointer'
+                                }}
+                                title="Xóa quyền"
+                            />
                         </Popconfirm>
                     </Access>
                 </Space>
             ),
-
         },
     ];
 
     const buildQuery = (params: any, sort: any, filter: any) => {
         const clone = { ...params };
-
-        let parts = [];
-        if (clone.name) parts.push(`name ~ '${clone.name}'`);
-        if (clone.apiPath) parts.push(`apiPath ~ '${clone.apiPath}'`);
-        if (clone.method) parts.push(`method ~ '${clone.method}'`);
-        if (clone.module) parts.push(`module ~ '${clone.module}'`);
-
-        clone.filter = parts.join(' and ');
-        if (!clone.filter) delete clone.filter;
-
-        clone.page = clone.current;
-        clone.size = clone.pageSize;
-
-        delete clone.current;
-        delete clone.pageSize;
-        delete clone.name;
-        delete clone.apiPath;
-        delete clone.method;
-        delete clone.module;
+        if (clone.name) clone.name = `/${clone.name}/i`;
+        if (clone.apiPath) clone.apiPath = `/${clone.apiPath}/i`;
+        if (clone.method) clone.method = `/${clone.method}/i`;
+        if (clone.module) clone.module = `/${clone.module}/i`;
 
         let temp = queryString.stringify(clone);
 
         let sortBy = "";
-        const fields = ["name", "apiPath", "method", "module", "createdAt", "updatedAt"];
-
-        if (sort) {
-            for (const field of fields) {
-                if (sort[field]) {
-                    sortBy = `sort=${field},${sort[field] === 'ascend' ? 'asc' : 'desc'}`;
-                    break;  // Remove this if you want to handle multiple sort parameters
-                }
-            }
+        if (sort && sort.name) {
+            sortBy = sort.name === 'ascend' ? "sort=name,asc" : "sort=name,desc";
+        }
+        if (sort && sort.apiPath) {
+            sortBy = sort.apiPath === 'ascend' ? "sort=apiPath,asc" : "sort=apiPath,desc";
+        }
+        if (sort && sort.method) {
+            sortBy = sort.method === 'ascend' ? "sort=method,asc" : "sort=method,desc";
+        }
+        if (sort && sort.module) {
+            sortBy = sort.module === 'ascend' ? "sort=module,asc" : "sort=module,desc";
+        }
+        if (sort && sort.createdAt) {
+            sortBy = sort.createdAt === 'ascend' ? "sort=createdAt,asc" : "sort=createdAt,desc";
+        }
+        if (sort && sort.updatedAt) {
+            sortBy = sort.updatedAt === 'ascend' ? "sort=updatedAt,asc" : "sort=updatedAt,desc";
         }
 
         //mặc định sort theo updatedAt
@@ -216,7 +242,7 @@ const PermissionPage = () => {
             >
                 <DataTable<IPermission>
                     actionRef={tableRef}
-                    headerTitle="Danh sách Permissions (Quyền Hạn)"
+                    headerTitle="Danh sách Quyền Hạn (Permissions)"
                     rowKey="id"
                     loading={isFetching}
                     columns={columns}
@@ -232,19 +258,31 @@ const PermissionPage = () => {
                             pageSize: meta.pageSize,
                             showSizeChanger: true,
                             total: meta.total,
-                            showTotal: (total, range) => { return (<div> {range[0]}-{range[1]} trên {total} rows</div>) }
+                            showTotal: (total: number, range: [number, number]) => { return (<div> {range[0]}-{range[1]} trên {total} rows</div>) }
                         }
                     }
                     rowSelection={false}
                     toolBarRender={(_action, _rows): any => {
                         return (
-                            <Button
-                                icon={<PlusOutlined />}
-                                type="primary"
-                                onClick={() => setOpenModal(true)}
+                            <Access
+                                permission={ALL_PERMISSIONS.PERMISSIONS.CREATE}
+                                hideChildren
                             >
-                                Thêm mới
-                            </Button>
+                                <Button
+                                    icon={<PlusOutlined />}
+                                    type="primary"
+                                    onClick={() => setOpenModal(true)}
+                                    style={{
+                                        borderRadius: 8,
+                                        fontWeight: 600,
+                                        background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+                                        boxShadow: '0 4px 12px rgba(37, 99, 235, 0.35)',
+                                        border: 'none'
+                                    }}
+                                >
+                                    Thêm mới
+                                </Button>
+                            </Access>
                         );
                     }}
                 />

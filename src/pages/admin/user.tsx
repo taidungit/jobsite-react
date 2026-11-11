@@ -54,9 +54,10 @@ const UserPage = () => {
             align: "center",
             render: (text, record, index) => {
                 return (
-                    <>
+                    <span style={{ fontWeight: 600, color: '#64748b' }}>
                         {(index + 1) + (meta.page - 1) * (meta.pageSize)}
-                    </>)
+                    </span>
+                )
             },
             hideInSearch: true,
         },
@@ -64,6 +65,17 @@ const UserPage = () => {
             title: 'Name',
             dataIndex: 'name',
             sorter: true,
+            render: (text, record) => (
+                <span
+                    style={{ fontWeight: 600, color: '#0f172a', cursor: 'pointer' }}
+                    onClick={() => {
+                        setOpenViewDetail(true);
+                        setDataInit(record);
+                    }}
+                >
+                    {text}
+                </span>
+            )
         },
         {
             title: 'Email',
@@ -92,7 +104,9 @@ const UserPage = () => {
             sorter: true,
             render: (text, record, index, action) => {
                 return (
-                    <>{record.createdAt ? dayjs(record.createdAt).format('DD-MM-YYYY HH:mm:ss') : ""}</>
+                    <span style={{ color: '#64748b', fontSize: 13 }}>
+                        {record.createdAt ? dayjs(record.createdAt).format('DD-MM-YYYY HH:mm:ss') : ""}
+                    </span>
                 )
             },
             hideInSearch: true,
@@ -104,34 +118,50 @@ const UserPage = () => {
             sorter: true,
             render: (text, record, index, action) => {
                 return (
-                    <>{record.updatedAt ? dayjs(record.updatedAt).format('DD-MM-YYYY HH:mm:ss') : ""}</>
+                    <span style={{ color: '#64748b', fontSize: 13 }}>
+                        {record.updatedAt ? dayjs(record.updatedAt).format('DD-MM-YYYY HH:mm:ss') : ""}
+                    </span>
                 )
             },
             hideInSearch: true,
         },
         {
-
             title: 'Actions',
             hideInSearch: true,
-            width: 50,
+            width: 90,
+            align: 'center',
             render: (_value, entity, _index, _action) => (
-                <Space>
-                    < Access
+                <Space size="middle">
+                    <EyeOutlined
+                        style={{
+                            fontSize: 18,
+                            color: '#2563eb',
+                            cursor: 'pointer'
+                        }}
+                        onClick={() => {
+                            setOpenViewDetail(true);
+                            setDataInit(entity);
+                        }}
+                        title="Xem chi tiết"
+                    />
+
+                    <Access
                         permission={ALL_PERMISSIONS.USERS.UPDATE}
                         hideChildren
                     >
                         <EditOutlined
                             style={{
-                                fontSize: 20,
-                                color: '#ffa500',
+                                fontSize: 18,
+                                color: '#d97706',
+                                cursor: 'pointer'
                             }}
-                            type=""
                             onClick={() => {
                                 setOpenModal(true);
                                 setDataInit(entity);
                             }}
+                            title="Chỉnh sửa"
                         />
-                    </Access >
+                    </Access>
 
                     <Access
                         permission={ALL_PERMISSIONS.USERS.DELETE}
@@ -145,30 +175,29 @@ const UserPage = () => {
                             okText="Xác nhận"
                             cancelText="Hủy"
                         >
-                            <span style={{ cursor: "pointer", margin: "0 10px" }}>
-                                <DeleteOutlined
-                                    style={{
-                                        fontSize: 20,
-                                        color: '#ff4d4f',
-                                    }}
-                                />
-                            </span>
+                            <DeleteOutlined
+                                style={{
+                                    fontSize: 18,
+                                    color: '#ef4444',
+                                    cursor: 'pointer'
+                                }}
+                                title="Xóa"
+                            />
                         </Popconfirm>
                     </Access>
-                </Space >
+                </Space>
             ),
-
         },
     ];
 
     const buildQuery = (params: any, sort: any, filter: any) => {
+        const clone = { ...params };
         const q: any = {
             page: params.current,
             size: params.pageSize,
             filter: ""
         }
 
-        const clone = { ...params };
         if (clone.name) q.filter = `${sfLike("name", clone.name)}`;
         if (clone.email) {
             q.filter = clone.name ?
@@ -177,6 +206,7 @@ const UserPage = () => {
         }
 
         if (!q.filter) delete q.filter;
+
         let temp = queryString.stringify(q);
 
         let sortBy = "";
@@ -210,7 +240,7 @@ const UserPage = () => {
             >
                 <DataTable<IUser>
                     actionRef={tableRef}
-                    headerTitle="Danh sách Users"
+                    headerTitle="Danh sách Người Dùng"
                     rowKey="id"
                     loading={isFetching}
                     columns={columns}
@@ -226,19 +256,31 @@ const UserPage = () => {
                             pageSize: meta.pageSize,
                             showSizeChanger: true,
                             total: meta.total,
-                            showTotal: (total, range) => { return (<div> {range[0]}-{range[1]} trên {total} rows</div>) }
+                            showTotal: (total: number, range: [number, number]) => { return (<div> {range[0]}-{range[1]} trên {total} rows</div>) }
                         }
                     }
                     rowSelection={false}
                     toolBarRender={(_action, _rows): any => {
                         return (
-                            <Button
-                                icon={<PlusOutlined />}
-                                type="primary"
-                                onClick={() => setOpenModal(true)}
+                            <Access
+                                permission={ALL_PERMISSIONS.USERS.CREATE}
+                                hideChildren
                             >
-                                Thêm mới
-                            </Button>
+                                <Button
+                                    icon={<PlusOutlined />}
+                                    type="primary"
+                                    onClick={() => setOpenModal(true)}
+                                    style={{
+                                        borderRadius: 8,
+                                        fontWeight: 600,
+                                        background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+                                        boxShadow: '0 4px 12px rgba(37, 99, 235, 0.35)',
+                                        border: 'none'
+                                    }}
+                                >
+                                    Thêm mới
+                                </Button>
+                            </Access>
                         );
                     }}
                 />
@@ -256,7 +298,7 @@ const UserPage = () => {
                 dataInit={dataInit}
                 setDataInit={setDataInit}
             />
-        </div >
+        </div>
     )
 }
 

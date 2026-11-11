@@ -242,7 +242,7 @@ const ModalCompany = (props: IProps) => {
                                             customRequest={handleUploadFileLogo}
                                             beforeUpload={beforeUpload}
                                             onChange={handleChange}
-                                            onRemove={(file) => handleRemoveFile(file)}
+                                            onRemove={(file: any) => handleRemoveFile(file)}
                                             onPreview={handlePreview}
                                             defaultFileList={
                                                 dataInit?.id ?

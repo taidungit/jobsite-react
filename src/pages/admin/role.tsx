@@ -25,7 +25,6 @@ const RolePage = () => {
     const roles = useAppSelector(state => state.role.result);
     const dispatch = useAppDispatch();
 
-
     //all backend permissions
     const [listPermissions, setListPermissions] = useState<{
         module: string;
@@ -44,7 +43,6 @@ const RolePage = () => {
         }
         init();
     }, [])
-
 
     const handleDeleteRole = async (id: string | undefined) => {
         if (id) {
@@ -69,78 +67,84 @@ const RolePage = () => {
         {
             title: 'Id',
             dataIndex: 'id',
-            width: 250,
-            render: (text, record, index, action) => {
+            width: 220,
+            render: (text, record) => {
                 return (
-                    <span>
+                    <code style={{ background: '#f1f5f9', padding: '2px 8px', borderRadius: 4, color: '#475569', fontSize: 13 }}>
                         {record.id}
+                    </code>
+                )
+            },
+            hideInSearch: true,
+        },
+        {
+            title: 'Tên Vai Trò',
+            dataIndex: 'name',
+            sorter: true,
+            render: (text) => <span style={{ fontWeight: 600, color: '#0f172a' }}>{text}</span>
+        },
+        {
+            title: 'Trạng thái',
+            dataIndex: 'active',
+            render(dom, entity) {
+                return (
+                    <Tag color={entity.active ? "success" : "error"} style={{ borderRadius: 6, fontWeight: 600 }}>
+                        {entity.active ? "ACTIVE" : "INACTIVE"}
+                    </Tag>
+                )
+            },
+            hideInSearch: true,
+        },
+        {
+            title: 'Ngày Tạo',
+            dataIndex: 'createdAt',
+            width: 180,
+            sorter: true,
+            render: (text, record) => {
+                return (
+                    <span style={{ color: '#64748b', fontSize: 13 }}>
+                        {record.createdAt ? dayjs(record.createdAt).format('DD-MM-YYYY HH:mm:ss') : ""}
                     </span>
                 )
             },
             hideInSearch: true,
         },
         {
-            title: 'Name',
-            dataIndex: 'name',
-            sorter: true,
-        },
-        {
-            title: 'Trạng thái',
-            dataIndex: 'active',
-            render(dom, entity, index, action, schema) {
-                return <>
-                    <Tag color={entity.active ? "lime" : "red"} >
-                        {entity.active ? "ACTIVE" : "INACTIVE"}
-                    </Tag>
-                </>
-            },
-            hideInSearch: true,
-        },
-        {
-            title: 'CreatedAt',
-            dataIndex: 'createdAt',
-            width: 200,
-            sorter: true,
-            render: (text, record, index, action) => {
-                return (
-                    <>{record.createdAt ? dayjs(record.createdAt).format('DD-MM-YYYY HH:mm:ss') : ""}</>
-                )
-            },
-            hideInSearch: true,
-        },
-        {
-            title: 'UpdatedAt',
+            title: 'Ngày Cập Nhật',
             dataIndex: 'updatedAt',
-            width: 200,
+            width: 180,
             sorter: true,
-            render: (text, record, index, action) => {
+            render: (text, record) => {
                 return (
-                    <>{record.updatedAt ? dayjs(record.updatedAt).format('DD-MM-YYYY HH:mm:ss') : ""}</>
+                    <span style={{ color: '#64748b', fontSize: 13 }}>
+                        {record.updatedAt ? dayjs(record.updatedAt).format('DD-MM-YYYY HH:mm:ss') : ""}
+                    </span>
                 )
             },
             hideInSearch: true,
         },
         {
-
-            title: 'Actions',
+            title: 'Hành Động',
             hideInSearch: true,
-            width: 50,
-            render: (_value, entity, _index, _action) => (
-                <Space>
+            width: 90,
+            align: 'center',
+            render: (_value, entity) => (
+                <Space size="middle">
                     <Access
                         permission={ALL_PERMISSIONS.ROLES.UPDATE}
                         hideChildren
                     >
                         <EditOutlined
                             style={{
-                                fontSize: 20,
-                                color: '#ffa500',
+                                fontSize: 18,
+                                color: '#d97706',
+                                cursor: 'pointer'
                             }}
-                            type=""
                             onClick={() => {
                                 setSingleRole(entity);
                                 setOpenModal(true);
                             }}
+                            title="Chỉnh sửa vai trò"
                         />
                     </Access>
                     <Access
@@ -155,35 +159,26 @@ const RolePage = () => {
                             okText="Xác nhận"
                             cancelText="Hủy"
                         >
-                            <span style={{ cursor: "pointer", margin: "0 10px" }}>
-                                <DeleteOutlined
-                                    style={{
-                                        fontSize: 20,
-                                        color: '#ff4d4f',
-                                    }}
-                                />
-                            </span>
+                            <DeleteOutlined
+                                style={{
+                                    fontSize: 18,
+                                    color: '#ef4444',
+                                    cursor: 'pointer'
+                                }}
+                                title="Xóa vai trò"
+                            />
                         </Popconfirm>
                     </Access>
                 </Space>
             ),
-
         },
     ];
 
     const buildQuery = (params: any, sort: any, filter: any) => {
         const clone = { ...params };
-        const q: any = {
-            page: params.current,
-            size: params.pageSize,
-            filter: ""
-        }
+        if (clone.name) clone.name = `${sfLike("name", clone.name)}`;
 
-        if (clone.name) q.filter = `${sfLike("name", clone.name)}`;
-
-        if (!q.filter) delete q.filter;
-
-        let temp = queryString.stringify(q);
+        let temp = queryString.stringify(clone);
 
         let sortBy = "";
         if (sort && sort.name) {
@@ -213,7 +208,7 @@ const RolePage = () => {
             >
                 <DataTable<IRole>
                     actionRef={tableRef}
-                    headerTitle="Danh sách Roles (Vai Trò)"
+                    headerTitle="Danh sách Vai Trò (Roles)"
                     rowKey="id"
                     loading={isFetching}
                     columns={columns}
@@ -229,7 +224,7 @@ const RolePage = () => {
                             pageSize: meta.pageSize,
                             showSizeChanger: true,
                             total: meta.total,
-                            showTotal: (total, range) => { return (<div> {range[0]}-{range[1]} trên {total} rows</div>) }
+                            showTotal: (total: number, range: [number, number]) => { return (<div> {range[0]}-{range[1]} trên {total} rows</div>) }
                         }
                     }
                     rowSelection={false}
@@ -239,6 +234,13 @@ const RolePage = () => {
                                 icon={<PlusOutlined />}
                                 type="primary"
                                 onClick={() => setOpenModal(true)}
+                                style={{
+                                    borderRadius: 8,
+                                    fontWeight: 600,
+                                    background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+                                    boxShadow: '0 4px 12px rgba(37, 99, 235, 0.35)',
+                                    border: 'none'
+                                }}
                             >
                                 Thêm mới
                             </Button>
@@ -250,7 +252,7 @@ const RolePage = () => {
                 openModal={openModal}
                 setOpenModal={setOpenModal}
                 reloadTable={reloadTable}
-                listPermissions={listPermissions!}
+                listPermissions={listPermissions}
                 singleRole={singleRole}
                 setSingleRole={setSingleRole}
             />

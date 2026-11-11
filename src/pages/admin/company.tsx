@@ -48,72 +48,80 @@ const CompanyPage = () => {
         {
             title: 'STT',
             key: 'index',
-            width: 50,
+            width: 60,
             align: "center",
             render: (text, record, index) => {
                 return (
-                    <>
+                    <span style={{ fontWeight: 600, color: '#64748b' }}>
                         {(index + 1) + (meta.page - 1) * (meta.pageSize)}
-                    </>)
+                    </span>
+                )
             },
             hideInSearch: true,
         },
         {
-            title: 'Name',
+            title: 'Tên Công Ty',
             dataIndex: 'name',
             sorter: true,
+            render: (text) => <span style={{ fontWeight: 600, color: '#0f172a' }}>{text}</span>
         },
         {
-            title: 'Address',
+            title: 'Địa Chỉ',
             dataIndex: 'address',
             sorter: true,
+            render: (text) => <span style={{ color: '#475569' }}>{text}</span>
         },
 
         {
-            title: 'CreatedAt',
+            title: 'Ngày Tạo',
             dataIndex: 'createdAt',
-            width: 200,
+            width: 180,
             sorter: true,
             render: (text, record, index, action) => {
                 return (
-                    <>{record.createdAt ? dayjs(record.createdAt).format('DD-MM-YYYY HH:mm:ss') : ""}</>
+                    <span style={{ color: '#64748b', fontSize: 13 }}>
+                        {record.createdAt ? dayjs(record.createdAt).format('DD-MM-YYYY HH:mm:ss') : ""}
+                    </span>
                 )
             },
             hideInSearch: true,
         },
         {
-            title: 'UpdatedAt',
+            title: 'Ngày Cập Nhật',
             dataIndex: 'updatedAt',
-            width: 200,
+            width: 180,
             sorter: true,
             render: (text, record, index, action) => {
                 return (
-                    <>{record.updatedAt ? dayjs(record.updatedAt).format('DD-MM-YYYY HH:mm:ss') : ""}</>
+                    <span style={{ color: '#64748b', fontSize: 13 }}>
+                        {record.updatedAt ? dayjs(record.updatedAt).format('DD-MM-YYYY HH:mm:ss') : ""}
+                    </span>
                 )
             },
             hideInSearch: true,
         },
         {
-
-            title: 'Actions',
+            title: 'Hành Động',
             hideInSearch: true,
-            width: 50,
+            width: 90,
+            align: 'center',
             render: (_value, entity, _index, _action) => (
-                <Space>
-                    < Access
+                <Space size="middle">
+                    <Access
                         permission={ALL_PERMISSIONS.COMPANIES.UPDATE}
                         hideChildren
                     >
                         <EditOutlined
                             style={{
-                                fontSize: 20,
-                                color: '#ffa500',
+                                fontSize: 18,
+                                color: '#d97706',
+                                cursor: 'pointer'
                             }}
-                            type=""
                             onClick={() => {
                                 setOpenModal(true);
                                 setDataInit(entity);
                             }}
+                            title="Chỉnh sửa công ty"
                         />
                     </Access >
                     <Access
@@ -128,19 +136,18 @@ const CompanyPage = () => {
                             okText="Xác nhận"
                             cancelText="Hủy"
                         >
-                            <span style={{ cursor: "pointer", margin: "0 10px" }}>
-                                <DeleteOutlined
-                                    style={{
-                                        fontSize: 20,
-                                        color: '#ff4d4f',
-                                    }}
-                                />
-                            </span>
+                            <DeleteOutlined
+                                style={{
+                                    fontSize: 18,
+                                    color: '#ef4444',
+                                    cursor: 'pointer'
+                                }}
+                                title="Xóa công ty"
+                            />
                         </Popconfirm>
                     </Access>
                 </Space >
             ),
-
         },
     ];
 
@@ -151,8 +158,6 @@ const CompanyPage = () => {
             size: params.pageSize,
             filter: ""
         }
-
-
 
         if (clone.name) q.filter = `${sfLike("name", clone.name)}`;
         if (clone.address) {
@@ -212,7 +217,7 @@ const CompanyPage = () => {
                             pageSize: meta.pageSize,
                             showSizeChanger: true,
                             total: meta.total,
-                            showTotal: (total, range) => { return (<div> {range[0]}-{range[1]} trên {total} rows</div>) }
+                            showTotal: (total: number, range: [number, number]) => { return (<div> {range[0]}-{range[1]} trên {total} rows</div>) }
                         }
                     }
                     rowSelection={false}
@@ -226,6 +231,13 @@ const CompanyPage = () => {
                                     icon={<PlusOutlined />}
                                     type="primary"
                                     onClick={() => setOpenModal(true)}
+                                    style={{
+                                        borderRadius: 8,
+                                        fontWeight: 600,
+                                        background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+                                        boxShadow: '0 4px 12px rgba(37, 99, 235, 0.35)',
+                                        border: 'none'
+                                    }}
                                 >
                                     Thêm mới
                                 </Button>
